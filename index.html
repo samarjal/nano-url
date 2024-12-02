@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NANO URL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+ body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    color: #333; 
+    background: linear-gradient(-45deg, #4e54c8, #8f94fb, #4a90e2, #3ec0f3);
+    background-size: 400% 400%; 
+    animation: gradientMove 15s ease infinite; 
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9); 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+    width: 90%;
+    max-width: 500px;
+}
+
+.title {
+    font-size: 36px;
+    color: #4a90e2; 
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+}
+
+.input-container {
+    margin: 20px 0;
+}
+
+.input-container input[type="text"] {
+    width: 90%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+    background-color: #f8f9fa; 
+    color: #333; 
+    margin-bottom: 15px;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.input-container input[type="text"]:focus {
+    border-color: #4a90e2; 
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.4);
+    outline: none;
+}
+
+.input-container input[type="button"] {
+    padding: 12px 25px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4a90e2; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); 
+    text-transform: uppercase;
+}
+
+.input-container input[type="button"]:hover {
+    background-color: #3a78c5; 
+    transform: scale(1.05); 
+}
+
+.creators {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555; 
+    font-style: italic;
+}
+
+a {
+    color: #4a90e2;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #3a78c5; 
+    text-decoration: underline;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="title">NANO URL</div>
+        <div class="input-container">
+            <input type="text" id="input-url" placeholder="Enter Your Link...">
+            <input type="button" id="shorten-btn" value="Shorten URL">
+        </div>
+        <div class="creators">
+            created by: Samar Jal + Ganesh Kumar + Ayush Bhardwaj + Divyansh Yadav
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('shorten-btn').addEventListener('click', async function () {
+            const inputUrl = document.getElementById('input-url').value;
+            const shortenButton = document.getElementById('shorten-btn');
+
+            if (!inputUrl) {
+                alert('Please enter a URL to shorten.');
+                return;
+            }
+        
+            shortenButton.disabled = true;
+            shortenButton.value = 'Shortening...';
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: inputUrl }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = `shortened.html?long_url=${encodeURIComponent(inputUrl)}&shortened_url=${encodeURIComponent(data.shortened_url)}`;
+                } else {
+                    alert(data.error || 'Something went wrong!');
+                }
+            } catch (error) {
+                alert('Error connecting to the server!');
+                console.error('Error:', error);
+            } finally {
+                shortenButton.disabled = false;
+                shortenButton.value = 'Shorten URL';
+            }
+        });
+    </script>
+
+</body>
+</html>
